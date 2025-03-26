@@ -1,7 +1,6 @@
 package com.cesde.proyecto_integrador.config;
 
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -15,13 +14,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.cesde.proyecto_integrador.security.JwtFilter;
 
+import lombok.RequiredArgsConstructor;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Autowired
-    private JwtFilter jwtFilter;
+    private final JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -33,11 +34,11 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/v1/surveys/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/student/**").hasRole("STUDENT")                        
                         .requestMatchers("/api/teacher/**").hasRole("TEACHER")
                         .requestMatchers("/api/v1/answers/**").hasAnyRole("STUDENT", "ADMIN", "TEACHER")
-                        .requestMatchers("/api/v1/surveys/**").hasAnyRole("TEACHER", "ADMIN")                        
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint((request, response, authException) -> {
