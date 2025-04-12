@@ -133,7 +133,7 @@ public class SurveyController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('TEACHER', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<Void> deleteSurvey(@PathVariable Long id) {
         try {
             log.debug("Eliminando encuesta: {}", id);

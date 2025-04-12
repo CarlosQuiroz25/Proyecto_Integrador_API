@@ -34,11 +34,11 @@ public class SecurityConfig {
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/v1/surveys/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/student/**").hasRole("STUDENT")                        
-                        .requestMatchers("/api/teacher/**").hasRole("TEACHER")
-                        .requestMatchers("/api/v1/answers/**").hasAnyRole("STUDENT", "ADMIN", "TEACHER")
+                        .requestMatchers("/api/v1/answers/**").hasAnyRole("STUDENT", "ADMIN")
+                        .requestMatchers("/api/v1/surveys/**").hasRole("ADMIN")
+
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint((request, response, authException) -> {
