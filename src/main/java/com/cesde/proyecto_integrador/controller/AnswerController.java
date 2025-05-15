@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import com.cesde.proyecto_integrador.dto.SurveyAnswersRequestDTO;
@@ -22,16 +24,15 @@ public class AnswerController {
     private final AnswerService answerService;
 
     @PostMapping
-    @PreAuthorize("hasAnyRole('STUDENT', 'TEACHER', 'ADMIN')")
+    // Eliminamos la anotación @PreAuthorize para permitir acceso público
     public ResponseEntity<List<Answer>> submitAnswers(
             @Valid @RequestBody SurveyAnswersRequestDTO answersDTO) {
         try {
-            log.debug("Recibiendo solicitud para guardar respuestas: {}", answersDTO);
+
+            // Procesar las respuestas
             List<Answer> savedAnswers = answerService.saveAnswers(answersDTO);
-            log.debug("Respuestas guardadas exitosamente");
             return ResponseEntity.ok(savedAnswers);
         } catch (Exception e) {
-            log.error("Error al guardar las respuestas: {}", e.getMessage());
             throw e;
         }
     }
@@ -49,4 +50,4 @@ public class AnswerController {
             @PathVariable Long surveyId) {
         return ResponseEntity.ok(answerService.getRespondentCount(surveyId));
     }
-} 
+}

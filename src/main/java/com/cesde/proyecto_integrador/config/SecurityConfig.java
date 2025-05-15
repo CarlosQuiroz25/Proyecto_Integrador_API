@@ -31,14 +31,14 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        // Permitir acceso público a los endpoints de respuestas (colocado primero para mayor prioridad)
+                        .requestMatchers("/api/v1/answers/**").permitAll()
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/student/**").hasRole("STUDENT")                        
-                        .requestMatchers("/api/v1/answers/**").hasAnyRole("STUDENT", "ADMIN")
                         .requestMatchers("/api/v1/surveys/**").hasRole("ADMIN")
-
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint((request, response, authException) -> {

@@ -33,6 +33,17 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(@SuppressWarnings("null") HttpServletRequest request, @SuppressWarnings("null") HttpServletResponse response, @SuppressWarnings("null") FilterChain filterChain)
             throws ServletException, IOException {
+        
+        // Permitir siempre el acceso al endpoint de respuestas sin verificar el token
+        String requestURI = request.getRequestURI();
+        log.debug("Request URI: {}", requestURI);
+        
+        if (requestURI.startsWith("/api/v1/answers")) {
+            log.debug("Permitiendo acceso al endpoint de respuestas sin verificar token");
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
         String authHeader = request.getHeader("Authorization");
         log.debug("Auth header received: {}", authHeader);
 
