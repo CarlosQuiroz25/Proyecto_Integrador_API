@@ -14,14 +14,11 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(@SuppressWarnings("null") CorsRegistry registry) {
                 registry.addMapping("/**") // Permite CORS en todos los endpoints
-                        .allowedOrigins(
-                            "https://b2pi2-876585927226.us-central1.run.app",
-                            "http://localhost:5173"
-                        ) // Orígenes permitidos
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Métodos HTTP permitidos
-                        .allowedHeaders("*") // Todos los encabezados permitidos
-                        .allowCredentials(true) // Si necesitas enviar cookies o autenticación
-                        .maxAge(3600); // Tiempo de caché para las respuestas preflight
+                        .allowedOriginPatterns("*") // Permite cualquier origen
+                        .allowedMethods("*")
+                        .allowedHeaders("*")
+                        .allowCredentials(true)
+                        .maxAge(3600);
             }
         };
     }
