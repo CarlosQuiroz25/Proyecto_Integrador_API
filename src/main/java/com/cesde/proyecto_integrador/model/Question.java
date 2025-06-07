@@ -31,7 +31,14 @@ public class Question {
     @NotNull(message = "El tipo de pregunta no puede estar vacío")
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_pregunta", nullable = false)
-    private QuestionType tipoPregunta;
+    private Type tipoPregunta;
+    
+    public enum Type {
+        MULTIPLE_CHOICE,
+        SINGLE_CHOICE,
+        TEXT,
+        SCALE
+    }
     
     @Column(name = "opciones_respuesta", columnDefinition = "TEXT")
     private String opcionesRespuesta;

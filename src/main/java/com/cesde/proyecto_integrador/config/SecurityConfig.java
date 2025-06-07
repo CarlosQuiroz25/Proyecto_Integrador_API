@@ -11,6 +11,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import java.util.Collections;
 
 import com.cesde.proyecto_integrador.security.JwtFilter;
 
@@ -27,19 +29,35 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
+                .cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOriginPatterns(Collections.singletonList("*"));
+                    config.setAllowedMethods(Collections.singletonList("*"));
+                    config.setAllowedHeaders(Collections.singletonList("*"));
+                    config.setAllowCredentials(true);
+                    config.setMaxAge(3600L);
+                    return config;
+                }))
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        // Permitir acceso público a los endpoints de respuestas (colocado primero para mayor prioridad)
+                        // Rutas públicas
+                        .requestMatchers(
+                            "/",
+                            "/error",
+                            "/swagger-ui/**",
+                            "/v3/api-docs/**",
+                            "/api/auth/**",
+                            "/api/admin/users/register"
+                        ).permitAll()
+                        // Rutas protegidas por roles
+                        .requestMatchers("/api/admin/**").permitAll()
+                        .requestMatchers("/api/student/**").permitAll()
+                        .requestMatchers("/api/v1/surveys/**").permitAll()
                         .requestMatchers("/api/v1/answers/**").permitAll()
-                        .requestMatchers("/").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/api/student/**").hasRole("STUDENT")                        
-                        .requestMatchers("/api/v1/surveys/**").hasRole("ADMIN")
-                        .anyRequest().authenticated())
+                        .anyRequest().authenticated()
+                )
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint((request, response, authException) -> {
                             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -51,6 +69,7 @@ public class SecurityConfig {
                             response.setContentType("application/json");
                             response.getWriter().write("{\"error\":\"Access denied\"}");
                         }))
+                // Aplicar el filtro JWT solo a las rutas que necesitan autenticación
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
