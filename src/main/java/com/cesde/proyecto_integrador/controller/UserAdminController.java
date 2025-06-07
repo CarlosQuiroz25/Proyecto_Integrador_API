@@ -36,7 +36,7 @@ public class UserAdminController {
                         @ApiResponse(responseCode = "400", description = "Invalid input data"),
                         @ApiResponse(responseCode = "409", description = "User already exists")
         })
-        @SecurityRequirement(name = "Bearer Authentication")
+        //@SecurityRequirement(name = "Bearer Authentication")
         @PostMapping("/register")
         public ResponseEntity<UserResponseDTO> registerUser(
                         @Parameter(description = "User details for registration", required = true) @RequestBody UserRegisterDTO user) {
@@ -73,7 +73,7 @@ public class UserAdminController {
                         @ApiResponse(responseCode = "404", description = "User not found"),
                         @ApiResponse(responseCode = "403", description = "Not authorized to reset password")
         })
-        @SecurityRequirement(name = "Bearer Authentication")
+        //@SecurityRequirement(name = "Bearer Authentication")
         @PutMapping("/{id}/reset-password")
         public ResponseEntity<Void> resetPassword(
                         @Parameter(description = "ID of the user", required = true) @PathVariable Long id,
